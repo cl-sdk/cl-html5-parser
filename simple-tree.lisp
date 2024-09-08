@@ -51,7 +51,7 @@
 
 (defclass element (node)
   ((type :initform :element :allocation :class)
-   (attributes :initform nil :accessor %node-attributes)))
+   (attributes :initform nil :accessor node-attributes)))
 
 (defclass comment-node (node)
   ((type :initform :comment :allocation :class)))
@@ -131,7 +131,7 @@
 
 (defun element-attribute (node attribute &optional namespace)
   (cdr (assoc (cons attribute namespace)
-              (%node-attributes node)
+              (node-attributes node)
               :test #'equal)))
 
 (defun (setf element-attribute) (new-value node attribute
@@ -139,11 +139,11 @@
   (check-type attribute string)
   (check-type new-value string)
   (let ((old-attr (assoc (cons attribute namespace)
-                         (%node-attributes node)
+                         (node-attributes node)
                          :test #'equal)))
     (if old-attr
         (setf (cdr old-attr) new-value)
-        (push (cons (cons attribute namespace) new-value) (%node-attributes node)))))
+        (push (cons (cons attribute namespace) new-value) (node-attributes node)))))
 
 ;;;
 ;;; Traversing
@@ -153,7 +153,7 @@
   (map nil function (%node-child-nodes node)))
 
 (defun element-map-attributes* (function node)
-  (loop for ((name . namespace) . value) in (%node-attributes node)
+  (loop for ((name . namespace) . value) in (node-attributes node)
         do (funcall function name namespace value)))
 
 (defun element-map-attributes (function node)
